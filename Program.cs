@@ -13,7 +13,7 @@ Console.ReadLine();
 
 // Two main differences are that C# is strongly typed while JavaScript is weakly typed, and C# is compiled while JavaScript is interpreted.
 
-int myInt; // NOT let or var.
+int myInt = 0; // NOT let or var.
 
 // Compiled means that C# converts the entire program to machine language ahead of time, while JavaScript reads each line one by one.
 // Typically this will mean that syntax errors, etc will be caught before the program even runs, meaning unhandled exceptions will be less common in that scenario.
@@ -53,10 +53,14 @@ catch (Exception e)
 // Since validation takes space, we can move the validation into a dedicated function to keep our main program concise. 
 GetIntSafe("Please enter any valid number: ");
 
+// Ternary operators are essentially an if/else in one line (condition ? valIfTrue : valIfFalse):
+Console.WriteLine("Your number is: " + (myInt % 2 == 1 ? "Odd" : "Even"));
 
 
+// Docstrings allow other developers to see what a function does at a glance.
 
 int GetIntSafe(string prompt)
+// Safely returns an int input from the user, based on the prompt. No formatting is done to the prompt, it is expected to be ready to go.
 {
     int output = 0;
     bool valid = false;
@@ -75,4 +79,20 @@ int GetIntSafe(string prompt)
         }
     }
     return output;
+}
+
+
+
+int var1 = 10, var2 = 5, var3=0;
+Console.WriteLine("Var1: " + var1 + " Var2: " + var2 + " Var3: " + var3);
+ExampleFunction(var1, ref var2, out var3);
+Console.WriteLine("Var1: " + var1 + " Var2: " + var2 + " Var3: " + var3);
+
+// Normal parameters can't modify their arguments, reference parameters can.
+// Output parameters set the argument value after the function ends (like a second return).
+void ExampleFunction(int number, ref int reference, out int output)
+{
+    number++;
+    reference++;
+    output = 1;
 }
