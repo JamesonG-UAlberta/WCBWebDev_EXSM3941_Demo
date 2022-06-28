@@ -17,7 +17,7 @@ int myInt = 0; // NOT let or var.
 
 // Compiled means that C# converts the entire program to machine language ahead of time, while JavaScript reads each line one by one.
 // Typically this will mean that syntax errors, etc will be caught before the program even runs, meaning unhandled exceptions will be less common in that scenario.
-
+float myFloat = 0.5f;
 string userName;
 
 Console.Write("Please enter your name: ");
