@@ -21,7 +21,7 @@ float myFloat = 0.5f;
 string userName;
 
 Console.Write("Please enter your name: ");
-userName = Console.ReadLine();
+userName = Console.ReadLine() ?? "";
 Console.WriteLine("Hello, " + userName + "!");
 
 Console.Write("Please enter a number between 1 and 10: ");
@@ -29,7 +29,7 @@ Console.Write("Please enter a number between 1 and 10: ");
 // Since converting a user input to an integer is "dangerous", we put it in a try so that we can catch any exceptions.
 try
 {
-    myInt = int.Parse(Console.ReadLine());
+    myInt = int.Parse(Console.ReadLine() ?? "");
     // This method also works to convert.
     Convert.ToInt32("1");
     if (myInt < 1 || myInt > 10)
@@ -69,7 +69,7 @@ int GetIntSafe(string prompt)
         Console.Write(prompt);
         try
         {
-            output = int.Parse(Console.ReadLine());
+            output = int.Parse(Console.ReadLine() ?? "");
             valid = true;
         }
         catch (Exception e)
@@ -83,7 +83,7 @@ int GetIntSafe(string prompt)
 
 
 
-int var1 = 10, var2 = 5, var3=0;
+int var1 = 10, var2 = 5, var3 = 0;
 Console.WriteLine("Var1: " + var1 + " Var2: " + var2 + " Var3: " + var3);
 ExampleFunction(var1, ref var2, out var3);
 Console.WriteLine("Var1: " + var1 + " Var2: " + var2 + " Var3: " + var3);
