@@ -1,7 +1,60 @@
-﻿using Xunit;
+﻿using System.Text.RegularExpressions;
+using Xunit;
 
 public class UnitTests
 {
+    /* Must: Not contain numbers, must contain only capital letters, must contain exactly 2 spaces (not at the beginning or end).
+    * 
+    * "1 234 5"
+    * "H E1L O"
+    * "h ell o"
+    * "H Ell O"
+    * " HELLO "
+    * "HE LLO"
+    * "HELLO"
+    * "H E L L O"
+    * 
+    */
+    bool FunkyTest(string toTest)
+    // TODO: Fix RegEx implementation.
+    {
+        bool isValid = true;
+        if (toTest.Any(x => char.IsNumber(x)))
+        // new Regex(@"\d").IsMatch(toTest)
+        {
+            isValid = false;
+        }
+        if (toTest.Any(x => !char.IsUpper(x) && x != ' '))
+        // new Regex(@"[a-z]").IsMatch(toTest)
+        {
+            isValid = false;
+        }
+        if (toTest[0] == ' ' || toTest[toTest.Length - 1] == ' ' || toTest.Count(x => x == ' ')!=2)
+        // new Regex(@"^[^ ]+ .* [^ ]+$").IsMatch(toTest)
+        {
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+
+    [Theory,
+        InlineData("1 234 5", false),
+        InlineData("H E1L O", false),
+        InlineData("h ell o", false),
+        InlineData("H Ell O", false),
+        InlineData(" HELLO ", false),
+        InlineData("HE LLO", false),
+        InlineData("HELLO", false),
+        InlineData("H E L L O", false),
+        InlineData("H ELL O", true)]
+    public void Test_FunkyTest(string toTest, bool expectedResult)
+    {
+        Assert.Equal(expectedResult, FunkyTest(toTest));
+    }
+    /*
+
     // Facts are parameterless tests. 
     // If it passes, the functionality works. 
     [Fact]
@@ -25,5 +78,8 @@ public class UnitTests
         int actualResult = param1 + param2;
         Assert.Equal(expectedResult, actualResult);
     }
-
+    */
 }
+
+
+
