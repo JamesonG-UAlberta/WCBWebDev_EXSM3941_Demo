@@ -1,84 +1,70 @@
 ﻿using System.Text.RegularExpressions;
 using Xunit;
 
+
 public class UnitTests
 {
-    /* Must: Not contain numbers, must contain only capital letters, must contain exactly 2 spaces (not at the beginning or end).
-    * 
-    * "1 234 5"
-    * "H E1L O"
-    * "h ell o"
-    * "H Ell O"
-    * " HELLO "
-    * "HE LLO"
-    * "HELLO"
-    * "H E L L O"
-    * 
-    */
-    bool FunkyTest(string toTest)
-    // TODO: Fix RegEx implementation.
+    bool TestValidEmail(string email)
+    // Tests to ensure the phone number entered follows the format mask "text@text.text".  Returns true if so, and false if not.
+    // Rules special characters other than periods and underscores as invalid.
     {
-        bool isValid = true;
-        if (toTest.Any(x => char.IsNumber(x)))
-        // new Regex(@"\d").IsMatch(toTest)
-        {
-            isValid = false;
-        }
-        if (toTest.Any(x => !char.IsUpper(x) && x != ' '))
-        // new Regex(@"[a-z]").IsMatch(toTest)
-        {
-            isValid = false;
-        }
-        if (toTest[0] == ' ' || toTest[toTest.Length - 1] == ' ' || toTest.Count(x => x == ' ')!=2)
-        // new Regex(@"^[^ ]+ .* [^ ]+$").IsMatch(toTest)
-        {
-            isValid = false;
-        }
+        return new Regex(@"^[\w.]+@[\w.]+[\w]+$").IsMatch(email);
+    }
+    bool TestValidPhoneNumber(string phone)
+    // Tests to ensure the phone number entered follows the format mask "###-###-####".  Returns true if so, and false if not.
+    {
+        return new Regex(@"^\d{3}-d{3}-d{4}$").IsMatch(phone);
+    }
+    bool TestValidNumber(int number)
+    // Tests to ensure the number entered is between 1 and 100 inclusive. Returns true if so, and false if not.
+    {
+        return number >= 1 && number <= 100;
+    }
 
-        return isValid;
+    [Theory,
+        InlineData("text@text.text", true),
+        InlineData("texttext.text", false),
+        InlineData("text@texttext", false),
+        InlineData("texttexttext", false),
+        InlineData("te-xt@text.text", false),
+        InlineData("te_xt@text.text", true),
+        InlineData("te.xt@text.text", true)]
+    public void Test_Email(string toTest, bool expectedResult)
+    {
+        Assert.Equal(expectedResult, TestValidEmail(toTest));
     }
 
 
     [Theory,
-        InlineData("1 234 5", false),
-        InlineData("H E1L O", false),
-        InlineData("h ell o", false),
-        InlineData("H Ell O", false),
-        InlineData(" HELLO ", false),
-        InlineData("HE LLO", false),
-        InlineData("HELLO", false),
-        InlineData("H E L L O", false),
-        InlineData("H ELL O", true)]
-    public void Test_FunkyTest(string toTest, bool expectedResult)
+        InlineData("123-456-7890", true),
+        InlineData("123456-7890", false),
+        InlineData("123-4567890", false),
+        InlineData("1234567890", false),
+        InlineData("1234-456-7890", false),
+        InlineData("123-4566-7890", false),
+        InlineData("123-456-78900", false),
+        InlineData("12-456-7890", false),
+        InlineData("123-45-7890", false),
+        InlineData("123-456-789", false),
+        InlineData("Random Text", false)]
+    public void Test_Phone(string toTest, bool expectedResult)
     {
-        Assert.Equal(expectedResult, FunkyTest(toTest));
-    }
-    /*
-
-    // Facts are parameterless tests. 
-    // If it passes, the functionality works. 
-    [Fact]
-    // Each method equates to a single "test". In order to pass a test, your code may need to pass multiple assertions.
-    // You can think of it kind of like questions on a written test. You can pass some questions, but not the test.
-    public void TestFact()
-    {
-        Assert.Equal(8, int.Parse("8"));
+        Assert.Equal(expectedResult, TestValidPhoneNumber(toTest));
     }
 
-    // Theories are tests with parameters, and can have multiple data sets.
-    // They are used to test things which can expect a wide range of inputs. 
-    // They typically are written with boundary inputs (IE if 1-10 should work, test -1, 0, 1, 10 and 11).
-    // Theories aren't always bulletproof (for example if 3 didn't work in the above example, it wouldn't be caught), but they are usually "good enough" as opposed to testing potentially hundreds of thousands of inputs.
     [Theory,
-        InlineData(1, 1, 2),
-        InlineData(2, 3, 5),
-        InlineData(5, 7, 12)]
-    public void TestTheory(int param1, int param2, int expectedResult)
+        InlineData(-1, false),
+        InlineData(0, false),
+        InlineData(1, true),
+        InlineData(100, true),
+        InlineData(101, false),
+        InlineData(42, true),
+        InlineData(50, true)]
+    public void Test_Number(int toTest, bool expectedResult)
     {
-        int actualResult = param1 + param2;
-        Assert.Equal(expectedResult, actualResult);
+        Assert.Equal(expectedResult, TestValidNumber(toTest));
     }
-    */
+
 }
 
 
