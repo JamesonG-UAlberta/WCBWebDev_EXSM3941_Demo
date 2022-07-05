@@ -1,71 +1,72 @@
-﻿using System.Text.RegularExpressions;
-using Xunit;
+﻿using System.IO;
 
-
-public class UnitTests
+// Store the user's menu choice.
+int userChoice;
+const string FILE_NAME = "passwords.txt";
+do
 {
-    bool TestValidEmail(string email)
-    // Tests to ensure the phone number entered follows the format mask "text@text.text".  Returns true if so, and false if not.
-    // Rules special characters other than periods and underscores as invalid.
+    // Display menu.
+    Console.Write("1) Register User\n2) Login\n0) Exit\n\tPlease Choose: ");
+    try
     {
-        return new Regex(@"^[\w.]+@[\w.]+[\w]+$").IsMatch(email);
+        // Read the user's choice.
+        userChoice = int.Parse(Console.ReadLine().Trim());
     }
-    bool TestValidPhoneNumber(string phone)
-    // Tests to ensure the phone number entered follows the format mask "###-###-####".  Returns true if so, and false if not.
+    catch
     {
-        return new Regex(@"^\d{3}-d{3}-d{4}$").IsMatch(phone);
+        // If the int.Parse fails, then assign a value that will trip the default switch case.
+        userChoice = -1;
     }
-    bool TestValidNumber(int number)
-    // Tests to ensure the number entered is between 1 and 100 inclusive. Returns true if so, and false if not.
+    // Clear the console to keep it clean.
+    Console.Clear();
+    // Decide what to do based on the user's choice.
+    switch (userChoice)
     {
-        return number >= 1 && number <= 100;
+        case 1:
+            using (StreamWriter writer = File.AppendText(FILE_NAME))
+            {
+                Console.Write("Please enter your desired username: ");
+                string newUserName = Console.ReadLine().Trim();
+                Console.Write("Please enter your desired password: ");
+                string newPassword = Console.ReadLine().Trim();
+
+                // "TestUser", "password"
+                // |
+                // --> "TestUser|password"
+                writer.WriteLine(newUserName + "|" + newPassword);
+            }
+            break;
+        case 2:
+            Console.Write("Please enter your username: ");
+            string userName = Console.ReadLine().Trim();
+            Console.Write("Please enter your password: ");
+            string password = Console.ReadLine().Trim();
+            bool success = false;
+
+            // Open the existing file and set the cursor at the top (not sensitive to nonexistent files).
+            using (StreamReader reader = File.OpenText(FILE_NAME)) { 
+                // While we are not at the end of the file.
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (line.Split("|")[0] == userName && line.Split("|")[1] == password)
+                    {
+                        success = true;
+                    }
+                }
+            }
+            Console.WriteLine(success ? "Success!" : "Incorrect password.");
+            break;
+        case 0:
+            // Exit.
+            break;
+        default:
+            // Display an error if the menu choice is invalid.
+            Console.WriteLine("Please enter a valid input.");
+            break;
     }
-
-    [Theory,
-        InlineData("text@text.text", true),
-        InlineData("texttext.text", false),
-        InlineData("text@texttext", false),
-        InlineData("texttexttext", false),
-        InlineData("te-xt@text.text", false),
-        InlineData("te_xt@text.text", true),
-        InlineData("te.xt@text.text", true)]
-    public void Test_Email(string toTest, bool expectedResult)
-    {
-        Assert.Equal(expectedResult, TestValidEmail(toTest));
-    }
-
-
-    [Theory,
-        InlineData("123-456-7890", true),
-        InlineData("123456-7890", false),
-        InlineData("123-4567890", false),
-        InlineData("1234567890", false),
-        InlineData("1234-456-7890", false),
-        InlineData("123-4566-7890", false),
-        InlineData("123-456-78900", false),
-        InlineData("12-456-7890", false),
-        InlineData("123-45-7890", false),
-        InlineData("123-456-789", false),
-        InlineData("Random Text", false)]
-    public void Test_Phone(string toTest, bool expectedResult)
-    {
-        Assert.Equal(expectedResult, TestValidPhoneNumber(toTest));
-    }
-
-    [Theory,
-        InlineData(-1, false),
-        InlineData(0, false),
-        InlineData(1, true),
-        InlineData(100, true),
-        InlineData(101, false),
-        InlineData(42, true),
-        InlineData(50, true)]
-    public void Test_Number(int toTest, bool expectedResult)
-    {
-        Assert.Equal(expectedResult, TestValidNumber(toTest));
-    }
-
-}
-
-
+    // Add a space of padding before re-showing the menu.
+    Console.WriteLine();
+    // Exit on 0.
+} while (userChoice != 0);
 
