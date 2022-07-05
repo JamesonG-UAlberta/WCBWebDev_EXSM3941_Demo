@@ -47,15 +47,31 @@ do
             using (StreamReader reader = File.OpenText(FILE_NAME)) { 
                 // While we are not at the end of the file.
                 string line;
+
+                // This is the "best" solution as is stops iterating once we find what we're looking for. 
+                while ((line = reader.ReadLine()) != null && !(success = (line.Split("|")[0] == userName && line.Split("|")[1] == password)));
+
+                // This is easy-ish to read but does unnecessary processing:
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (line.Split("|")[0] == userName && line.Split("|")[1] == password)
-                    {
-                        success = true;
-                    }
+                    success = success || (line.Split("|")[0] == userName && line.Split("|")[1] == password);
+                }
+
+                // This is verbose but only does /some/ unnecessary processing:
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (line.Split("|")[0] == userName && line.Split("|")[1] == password) success = true;
+                    /*
+                        {
+                            success = true;
+                        }
+                     */
                 }
             }
-            Console.WriteLine(success ? "Success!" : "Incorrect password.");
+
+            // Magic of LINQ...
+            string[] logins = File.ReadAllLines(FILE_NAME);
+            Console.WriteLine(logins.Count(x => x.Split("|")[0] == userName && x.Split("|")[1] == password) == 1 ? "Success!" : "Incorrect password.");
             break;
         case 0:
             // Exit.
